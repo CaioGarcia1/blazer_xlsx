@@ -7,6 +7,7 @@ require "csv"
 require "digest/sha2"
 require "json"
 require "yaml"
+require "xlsxtream"
 
 # modules
 require_relative "blazer/version"
