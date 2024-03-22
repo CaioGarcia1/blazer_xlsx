@@ -1,7 +1,7 @@
 require_relative "lib/blazer/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "blazer_xslx"
+  spec.name          = "blazer_xlsx"
   spec.version       = Blazer::VERSION
   spec.summary       = "Blazer fork that adds support for exporting to XLSX"
   spec.homepage      = "https://github.com/CaioGarcia1/blazer_xlsx"
