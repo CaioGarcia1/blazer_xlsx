@@ -272,8 +272,8 @@ module Blazer
           raise Error, @error if @error && Rails.env.test?
 
           data = csv_data(@columns, @rows, @data_source)
-          filename = "#{@query.try(:name).try(:parameterize).presence || 'query'}.csv"
-          send_data data, type: "text/csv; charset=utf-8", disposition: "attachment", filename: filename
+          filename = "#{@query.try(:name).try(:parameterize).presence || 'query'}.xlsx"
+          send_data data, type: "xlsx", disposition: "attachment", filename: filename
         end
       end
     end
@@ -370,12 +370,17 @@ module Blazer
     end
 
     def csv_data(columns, rows, data_source)
-      CSV.generate do |csv|
-        csv << columns
+      io = StringIO.new
+      xlsx = Xlsxtream::Workbook.new(io)
+      xlsx.write_worksheet(name: "Sheet1", auto_format: true) do |sheet|
+        sheet << columns
         rows.each do |row|
-          csv << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v }
+          sheet << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v }
         end
       end
+      xlsx.close
+      io.rewind
+      io.read
     end
 
     def blazer_time_value(data_source, k, v)
