@@ -46,20 +46,6 @@ module Blazer
           if adapter_name == "Trilogy"
             columns.map! { |k| k.dup.force_encoding(Encoding::UTF_8) }
           end
-
-          # fix for binary data
-          if mysql?
-            rows =
-              rows.map do |row|
-                row.map do |v|
-                  if v.is_a?(String) && v.encoding == Encoding::BINARY
-                    "0x#{v.unpack1("H*").upcase}"
-                  else
-                    v
-                  end
-                end
-              end
-          end
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")
           error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
@@ -164,7 +150,7 @@ module Blazer
       def cohort_analysis_statement(statement, period:, days:)
         raise "Cohort analysis not supported" unless supports_cohort_analysis?
 
-        cohort_column = statement =~ /\bcohort_time\b/ ? "cohort_time" : "conversion_time"
+        cohort_column = statement.match?(/\bcohort_time\b/) ? "cohort_time" : "conversion_time"
         tzname = Blazer.time_zone.tzinfo.name
 
         if mysql?

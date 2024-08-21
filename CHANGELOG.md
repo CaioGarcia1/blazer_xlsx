@@ -1,6 +1,6 @@
 ## 3.0.4 (unreleased)
 
-- Fixed error with MySQL and binary data
+- Improved CSP support
 
 ## 3.0.3 (2024-01-10)
 
